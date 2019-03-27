@@ -11,13 +11,23 @@ start:
 # Compute (3n + 1) using LEA
 	lea 1(%rdi, %rdi, 2), %rdx
 # Compute (n / 2)
-	mov %rdi, %r8
-	shr $0x01, %r8
-	bt $0x00, %rdi
+	shr $0x01, %rdi
+# Overwrite value, if it was odd
 	cmovc %rdx, %rdi
-	cmovnc %r8, %rdi
-# Computation performed - count it
+# Computation step performed - count it
 	inc %rax
 	jmp start
 end:
+	ret
+# size_t collatz_calc(size_t value)
+# value is in %rdi
+.global collatz_calc
+.section .text
+collatz_calc:
+# Compute (3n + 1) using LEA
+	lea 1(%rdi, %rdi, 2), %rax
+# Compute (n / 2)
+	shr $0x01, %rdi
+# Overwrite result, if value was odd
+	cmovnc %rdi, %rax
 	ret
